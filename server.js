@@ -9,7 +9,7 @@ const bodyParser = require('body-parser')
 const port = 3000;
 
 mongoose.connect('mongodb+srv://Alaref:teCv7CoYMu0zQ96B@cluster0.x0jhx.mongodb.net/shop?retryWrites=true&w=majority' ,
-{useMongoClient: true})
+{ useNewUrlParser: true, useUnifiedTopology: true })
 
 app.listen(port , () => {
     console.log("listening at port " + port);

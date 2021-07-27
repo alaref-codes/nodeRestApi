@@ -1,16 +1,15 @@
 const express = require('express');
-// const mongoose = require('')
 const mongoose = require('mongoose');
-
 const router = express.Router();
 const Product = require('../models/product');
-
 
 router.get('/' , (req,res,next) => {
     res.status(200).json({
         message: 'Handeled get request to /products'
     })
 })
+
+// POST REQUEST
 
 router.post('/' , (req,res,next) => {
     const product = new Product({
@@ -30,26 +29,29 @@ router.post('/' , (req,res,next) => {
     })
 })
 
+// GET REQUEST BY ID 
+
 router.get('/:id' , (req,res,next) => {
     const id = req.params.id;
-    if (id === 'special') {
-        res.status(200).json({
-            message: 'The special ID',
-            id
-        })
-    } else {
-        res.status(200).json({
-            message: 'you Passed an id',
-            id
-        })
-    }
+    Product.findById(id)
+    .exec()
+    .then(doc => {
+        console.log(doc);
+        res.status(200).json(doc)           
+    })
+    .catch(err => {
+        res.status(500).json({ error : err })
+    })
 })
 
+// UPDATE REQUEST
 router.patch('/:id' , (req,res,next) => {
     res.status(200).json({
         message: 'Updated',
     })
 })
+
+// DELETE REQUEST
 
 router.delete('/:id', (req,res,next) => {
     res.status(200).json({
