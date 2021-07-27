@@ -16,7 +16,7 @@ router.post('/' , (req,res,next) => {
         price: req.body.price
     }
     res.status(200).json({
-        message: 'Handeled get request to /products',
+        message: 'Handeled post request to /products',
         createdProduct: product
     })
 })
