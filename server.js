@@ -3,13 +3,18 @@ const app = express();
 const proRouter = require('./api/routes/products');
 const orderRouter = require('./api/routes/order');
 const morgan = require('morgan');
+const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
 
 const port = 3000;
 
+mongoose.connect('mongodb+srv://Alaref:teCv7CoYMu0zQ96B@cluster0.x0jhx.mongodb.net/shop?retryWrites=true&w=majority' ,
+{useMongoClient: true})
+
 app.listen(port , () => {
     console.log("listening at port " + port);
 });
+
 
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({extended: false})) // false to just support simple url
