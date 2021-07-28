@@ -4,8 +4,14 @@ const router = express.Router();
 const Product = require('../models/product');
 
 router.get('/' , (req,res,next) => {
-    res.status(200).json({
-        message: 'Handeled get request to /products'
+    Product.find()// you can append find.SomeMethod to the find method to get a specific query like limitnig the result or something
+    .then(doc => {
+        console.log(doc);
+        res.status(200).json(doc)
+    })
+    .catch(err => {
+        console.log(err);
+        res.status(500).json({error:err})
     })
 })
 
@@ -34,10 +40,13 @@ router.post('/' , (req,res,next) => {
 router.get('/:id' , (req,res,next) => {
     const id = req.params.id;
     Product.findById(id)
-    .exec()
     .then(doc => {
-        console.log(doc);
-        res.status(200).json(doc)           
+        console.log("From database",doc);
+        if (doc) {
+            res.status(200).json(doc)           
+        } else {
+            res.status(404).json({message: "No valud entry for that id"})
+        }
     })
     .catch(err => {
         res.status(500).json({ error : err })
@@ -54,8 +63,19 @@ router.patch('/:id' , (req,res,next) => {
 // DELETE REQUEST
 
 router.delete('/:id', (req,res,next) => {
-    res.status(200).json({
-        message: "Deleted complete",
+    const id = req.params.id;
+    Product.remove({ _id: id})
+    .then(result => {
+        res.status(200).json({
+            result,
+            message: "Deletion have been completed"
+        })
+    })
+    .catch(err => {
+        console.log(err);
+        res.status(500).json({
+            error: err
+        })
     })
 })
 
