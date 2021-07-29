@@ -1,17 +1,33 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const router = express.Router();
-const Product = require('../models/product');
+const Product = require('../models/products');
 
 router.get('/' , (req,res,next) => {
     Product.find()// you can append find.SomeMethod to the find method to get a specific query like limitnig the result or something
-    .then(doc => {
-        console.log(doc);
-        res.status(200).json(doc)
+    .select('name price _id') // to select a specific columns 
+    .then(docs => {
+        const response = {
+            count: docs.length,
+            product: docs.map(function(doc) {
+                    return {
+                        name: doc.name,
+                        price: doc.price,
+                        _id: doc._id,
+                        request: {
+                            type: 'GET',
+                            url: 'http://localhost:3000/products/' + doc._id
+                    }
+                }
+            }) 
+        }
+        res.status(200).json(response)
     })
     .catch(err => {
         console.log(err);
-        res.status(500).json({error:err})
+        res.status(500).json({
+            error:err
+        })
     })
 })
 
@@ -23,16 +39,19 @@ router.post('/' , (req,res,next) => {
         name: req.body.name,
         price: req.body.price
     })
-    product.save().then( result => {
-        console.log(result);
+    product.save()
+    .then( result => {
+        res.status(200).json({
+            message: 'Handeled post request to /products',
+            createdProduct: product
+        })
     })
     .catch(err => {
-        console.log(err);
+        res.status(500).json({
+            error: err
+        })
     })
-    res.status(200).json({
-        message: 'Handeled post request to /products',
-        createdProduct: product
-    })
+
 })
 
 // GET REQUEST BY ID 
@@ -54,7 +73,7 @@ router.get('/:id' , (req,res,next) => {
 })
 
 // UPDATE REQUEST
-router.patch('/:id' , (req,res,next) => {
+router.patch('/:id' , (req,res) => {
     const id = req.params.id;
     const updateOps = {}; 
     for (const ops of req.body) {
@@ -75,7 +94,6 @@ router.patch('/:id' , (req,res,next) => {
 })
 
 // DELETE REQUEST
-
 router.delete('/:id', (req,res,next) => {
     const id = req.params.id;
     Product.remove({ _id: id})
