@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const router = express.Router();
-const Product = require('../models/products');
+const Product = require('../models/product');
 
 router.get('/' , (req,res,next) => {
     Product.find()// you can append find.SomeMethod to the find method to get a specific query like limitnig the result or something
@@ -64,7 +64,7 @@ router.get('/:id' , (req,res,next) => {
         if (doc) {
             res.status(200).json(doc)           
         } else {
-            res.status(404).json({message: "No valud entry for that id"})
+            res.status(404).json({message: "No valid entry for that id"})
         }
     })
     .catch(err => {
