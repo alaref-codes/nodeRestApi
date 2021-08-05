@@ -1,39 +1,15 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const router = express.Router();
-const Product = require('../models/product');
+const express   = require('express');
+const mongoose  = require('mongoose');
+const router    = express.Router();
+const checkAuth = require('../auth/check-auth')
 
-router.get('/' , (req,res,next) => {
-    Product.find()// you can append find.SomeMethod to the find method to get a specific query like limitnig the result or something
-    .select('name price _id') // to select a specific columns 
-    .then(docs => {
-        const response = {
-            count: docs.length,
-            product: docs.map(function(doc) {
-                    return {
-                        name: doc.name,
-                        price: doc.price,
-                        _id: doc._id,
-                        request: {
-                            type: 'GET',
-                            url: 'http://localhost:3000/products/' + doc._id
-                    }
-                }
-            }) 
-        }
-        res.status(200).json(response)
-    })
-    .catch(err => {
-        console.log(err);
-        res.status(500).json({
-            error:err
-        })
-    })
-})
+const productController = require('../controllers/products')
+router.get('/' , productController.getProduct )
+
 
 // POST REQUEST
 
-router.post('/' , (req,res,next) => {
+router.post('/' , checkAuth , (req,res,next) => {
     const product = new Product({
         _id: new mongoose.Types.ObjectId(),
         name: req.body.name,
@@ -94,7 +70,7 @@ router.patch('/:id' , (req,res) => {
 })
 
 // DELETE REQUEST
-router.delete('/:id', (req,res,next) => {
+router.delete('/:id' , checkAuth, (req,res,next) => {
     const id = req.params.id;
     Product.remove({ _id: id})
     .then(result => {
