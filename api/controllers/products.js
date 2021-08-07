@@ -1,5 +1,5 @@
 const Product = require('../models/product');
-
+const mongoose = require('mongoose');
 exports.getProduct = (req,res,next) => {
     Product.find()// you can append find.SomeMethod to the find method to get a specific query like limitnig the result or something
     .select('name price _id') // to select a specific columns 
@@ -30,6 +30,7 @@ exports.getProduct = (req,res,next) => {
 
 
 exports.postProduct = (req,res,next) => {
+    console.log(req.file)
     const product = new Product({
         _id: new mongoose.Types.ObjectId(),
         name: req.body.name,
